@@ -29,19 +29,34 @@
     </tr>
 </table>
 
+<ul ng-if="state.current">
+    <li>tick: {{state.tick}}</li>
+    <li>current: {{state.current}}ms</li>
+    <li>min: {{state.min}}ms</li>
+    <li>max: {{state.max}}ms</li>
+    <li ng-if="state.tick">avg: {{Math.round(state.total / state.tick)}}ms</li>
+</ul>
+
+</body>
+
+</html>
+
 <script language="javascript">
     var app = angular.module('app', []);
 
     app.controller('test', ['$scope', '$interval', function ($scope, $interval) {
-        var rows = 400;
-        var columns = 400;
+        var rows = 300;
+        var columns = 300;
         var timeout = 10;
 
+        $scope.Math = Math;
         $scope.data = [];
         $scope.state = {
             min: 0,
             max: 0,
-            avg: 0
+            tick: 0,
+            current: 0,
+            total: 0
         };
 
         function color() {
@@ -68,15 +83,25 @@
             }
         }
 
-        setup();
-
+        var start;
         var stop = $interval(function () {
-            update();
+            if (!start) {
+                start = Date.now();
+                setup();
+            }
+            else {
+                var state = $scope.state;
+                state.current = Date.now() - start;
+                state.min = state.min ? Math.min(state.current, state.min) : state.current;
+                state.max = state.min ? Math.max(state.current, state.min) : state.current;
+                state.total += state.current;
+                state.tick++;
+
+                start = Date.now();
+                update();
+            }
+
         }, timeout);
 
     }]);
 </script>
-
-</body>
-
-</html>
