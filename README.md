@@ -1,2 +1,2 @@
 # ng-perf
-Try to improve angular perfomance
+Try to improve angular performance

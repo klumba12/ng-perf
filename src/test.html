@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+    <script src="./angular.js"></script>
+    <style>
+        table {
+            border-spacing: 0;
+        }
+
+        table td {
+            padding: 0;
+        }
+
+        table td div {
+            width: 1px;
+            height: 1px;
+        }
+    </style>
+</head>
+
+<body ng-controller="test">
+<table>
+    <tr ng-repeat="row in data track by $index">
+        <td ng-repeat="color in row track by $index">
+            <div ng-style="{'background-color': '#' + color}">
+            </div>
+        </td>
+    </tr>
+</table>
+
+<script language="javascript">
+    var app = angular.module('app', []);
+
+    app.controller('test', ['$scope', '$interval', function ($scope, $interval) {
+        var rows = 400;
+        var columns = 400;
+        var timeout = 10;
+
+        $scope.data = [];
+        $scope.state = {
+            min: 0,
+            max: 0,
+            avg: 0
+        };
+
+        function color() {
+            return Math.floor(Math.random() * 16777215).toString(16);
+        }
+
+        function setup() {
+            var data = $scope.data;
+            for (var i = 0; i < rows; i++) {
+                var row = data[i] = [];
+                for (var j = 0; j < columns; j++) {
+                    row[j] = color();
+                }
+            }
+        }
+
+        function update() {
+            var data = $scope.data;
+            for (var i = 0; i < rows; i++) {
+                var row = data[i];
+                for (var j = 0; j < columns; j++) {
+                    row[j] = color();
+                }
+            }
+        }
+
+        setup();
+
+        var stop = $interval(function () {
+            update();
+        }, timeout);
+
+    }]);
+</script>
+
+</body>
+
+</html>
