@@ -2,7 +2,7 @@
 <html ng-app="app">
 
 <head>
-    <script src="./angular.js"></script>
+    <script src="./angular.pump.js"></script>
     <style>
         table {
             border-spacing: 0;
@@ -21,8 +21,8 @@
 
 <body ng-controller="test">
 <table>
-    <tr ng-repeat="row in data track by $index">
-        <td ng-repeat="color in row track by $index">
+    <tr ng-repeat="row in ::data track by $index">
+        <td ng-repeat="color in ::row track by $index">
             <div ng-style="{'background-color': '#' + color}">
             </div>
         </td>
@@ -45,8 +45,8 @@
     var app = angular.module('app', []);
 
     app.controller('test', ['$scope', '$interval', function ($scope, $interval) {
-        var rows = 300;
-        var columns = 300;
+        var rows = 200;
+        var columns = 200;
         var timeout = 10;
 
         $scope.Math = Math;

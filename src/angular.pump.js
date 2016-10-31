@@ -2810,8 +2810,6 @@ JQLite._data = function(node) {
 function jqNextId() { return ++jqId; }
 
 
-var SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g;
-var MOZ_HACK_REGEXP = /^moz([A-Z])/;
 var MOUSE_EVENT_MAP= { mouseleave: "mouseout", mouseenter: "mouseover"};
 var jqLiteMinErr = minErr('jqLite');
 
@@ -2820,13 +2818,39 @@ var jqLiteMinErr = minErr('jqLite');
  * Also there is special case for Moz prefix starting with upper case letter.
  * @param name Name to normalize
  */
-function camelCase(name) {
-  return name.
-    replace(SPECIAL_CHARS_REGEXP, function(_, separator, letter, offset) {
-      return offset ? letter.toUpperCase() : letter;
-    }).
-    replace(MOZ_HACK_REGEXP, 'Moz$1');
-}
+ function camelCase(name) {
+        var length = name.length,
+                result = '',
+                makeUpper = false;
+
+        for (var i = 0; i < length; i++) {
+            var c = name[i];
+            if (c === ':' || c === '-' || c === '_') {
+                makeUpper = true;
+                continue;
+            }
+
+            if (makeUpper) {
+                result += c.toUpperCase();
+                makeUpper = false;
+            }
+            else {
+                result += c;
+            }
+        }
+
+        if(result[0] === 'm' && 
+           result[1] === 'o' && 
+           result[2] === 'z'){
+            var n = reult[4];
+            if(n && n.toUpperCase() === n){
+                reult[0] = 'M';
+             }
+        }
+
+
+        return result;
+    }
 
 var SINGLE_TAG_REGEXP = /^<([\w-]+)\s*\/?>(?:<\/\1>|)$/;
 var HTML_REGEXP = /<|&#?\w+;/;

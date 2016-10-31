@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+    <script src="./angular.js"></script>
+</head>
+
+<body ng-controller="test">
+
+<ul>
+    <li>camelCase: {{state.camelCase}}ms</li>
+    <li>camelCase1: {{state.camelCase1}}ms</li>
+    <li>camelCase2: {{state.camelCase2}}ms</li>
+    <li>camelCase3: {{state.camelCase3}}ms</li>
+    <li>camelCase4: {{state.camelCase4}}ms</li>
+    <li>camelCase5: {{state.camelCase5}}ms</li>
+</ul>
+
+</body>
+
+</html>
+
+<script language="javascript">
+
+    var app = angular.module('app', []);
+
+    app.controller('test', ['$scope', '$interval', function ($scope, $interval) {
+        var cases = [
+            'camelcase',
+            'camel-case',
+            'camel_case',
+            'camel:case',
+            'c-a_m:e-l_c:a-s_e:',
+            'Mozcamelcase',
+            'MozCamelcase',
+            'Moz-Camelcase',
+            'MozCamel-case',
+            'Moz-Camelcase',
+            'Moz-Camelcase', 
+            'Moz-Camelcase',
+            '-moz-foo-bar',
+            '-webkit-foo-bar'
+        ];
+
+        var count = 10000;
+
+        $interval(function () {
+            $scope.state = {
+                camelCase: test(count, camelCase, cases),
+                camelCase1: test(count, camelCase1, cases),
+                camelCase2: test(count, camelCase2, cases),
+                camelCase3: test(count, camelCase3, cases),
+                camelCase4: test(count, camelCase4, cases),
+                camelCase5: test(count, camelCase5, cases)
+            };
+        }, 100);
+
+        function test(n, f, args) {
+            var start = Date.now(),
+                    count = n;
+
+            do {
+                args.forEach(function (arg) {
+                    f(arg);
+                });
+            } while (--n);
+
+            return (Date.now() - start) / count;
+        }
+    }]);
+
+    var SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g;
+    var MOZ_HACK_REGEXP = /^moz([A-Z])/;
+    var SPECIAL_CHARS = {':': true, '-': true, '.': true};
+
+    function camelCase(name) {
+        return name.replace(SPECIAL_CHARS_REGEXP, function (_, separator, letter, offset) {
+            return offset ? letter.toUpperCase() : letter;
+        }).replace(MOZ_HACK_REGEXP, 'Moz$1');
+    }
+
+    function camelCase1(name) {
+        var length = name.length,
+                result = [],
+                makeUpper = false;
+
+        for (var i = 0; i < length; i++) {
+            var c = name[i];
+            if (c === ':' || c === '-' || c === '_') {
+                makeUpper = true;
+                continue;
+            }
+
+            if (makeUpper) {
+                result.push(c.toUpperCase());
+                makeUpper = false;
+            }
+            else {
+                result.push(c);
+            }
+        }
+
+        if(result[0] === 'm' && 
+           result[1] === 'o' && 
+           result[2] === 'z'){
+            var n = reult[4];
+            if(n && n.toUpperCase() === n){
+                reult[0] = 'M';
+             }
+        }
+
+        return result.join('');
+    }
+
+    function camelCase2(name) {
+        var length = name.length,
+                result = [],
+                makeUpper = false;
+
+        for (var i = 0; i < length; i++) {
+            var c = name[i];
+            if (SPECIAL_CHARS[c]) {
+                makeUpper = true;
+                continue;
+            }
+
+            if (makeUpper) {
+                result.push(c.toUpperCase());
+                makeUpper = false;
+            }
+            else {
+                result.push(c);
+            }
+        }
+
+        if(result[0] === 'm' && 
+           result[1] === 'o' && 
+           result[2] === 'z'){
+            var n = reult[4];
+            if(n && n.toUpperCase() === n){
+                reult[0] = 'M';
+             }
+        }
+
+        return result.join('');
+    }
+
+    function camelCase3(name) {
+        var length = name.length,
+                result = [],
+                makeUpper = false;
+
+        for (var i = 0; i < length; i++) {
+            var c = name[i];
+            if (SPECIAL_CHARS.hasOwnProperty(c)) {
+                makeUpper = true;
+                continue;
+            }
+
+            if (makeUpper) {
+                result.push(c.toUpperCase());
+                makeUpper = false;
+            }
+            else {
+                result.push(c);
+            }
+        }
+
+        if(result[0] === 'm' && 
+           result[1] === 'o' && 
+           result[2] === 'z'){
+            var n = reult[4];
+            if(n && n.toUpperCase() === n){
+                reult[0] = 'M';
+             }
+        }
+
+        return result.join('');
+    }
+
+    function camelCase4(name) {
+        var length = name.length,
+                result = '',
+                makeUpper = false;
+
+        for (var i = 0; i < length; i++) {
+            var c = name[i];
+            if (SPECIAL_CHARS.hasOwnProperty(c)) {
+                makeUpper = true;
+                continue;
+            }
+
+            if (makeUpper) {
+                result += c.toUpperCase();
+                makeUpper = false;
+            }
+            else {
+                result += c;
+            }
+        }
+
+        if(result[0] === 'm' && 
+           result[1] === 'o' && 
+           result[2] === 'z'){
+            var n = reult[4];
+            if(n && n.toUpperCase() === n){
+                reult[0] = 'M';
+             }
+        }
+
+        return result;
+    }
+
+    function camelCase5(name) {
+        var length = name.length,
+                result = '',
+                makeUpper = false;
+
+        for (var i = 0; i < length; i++) {
+            var c = name[i];
+            if (c === ':' || c === '-' || c === '_') {
+                makeUpper = true;
+                continue;
+            }
+
+            if (makeUpper) {
+                result += c.toUpperCase();
+                makeUpper = false;
+            }
+            else {
+                result += c;
+            }
+        }
+
+        if(result[0] === 'm' && 
+           result[1] === 'o' && 
+           result[2] === 'z'){
+            var n = reult[4];
+            if(n && n.toUpperCase() === n){
+                reult[0] = 'M';
+             }
+        }
+
+
+        return result;
+    }
+
+</script>
