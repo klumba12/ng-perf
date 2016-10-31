@@ -82,18 +82,18 @@
     function camelCase1(name) {
         var length = name.length,
                 result = [],
-                makeUpper = false;
+                capitalize = false;
 
         for (var i = 0; i < length; i++) {
             var c = name[i];
             if (c === ':' || c === '-' || c === '_') {
-                makeUpper = true;
+                capitalize = true;
                 continue;
             }
 
-            if (makeUpper) {
+            if (capitalize) {
                 result.push(c.toUpperCase());
-                makeUpper = false;
+                capitalize = false;
             }
             else {
                 result.push(c);
@@ -115,18 +115,18 @@
     function camelCase2(name) {
         var length = name.length,
                 result = [],
-                makeUpper = false;
+                capitalize = false;
 
         for (var i = 0; i < length; i++) {
             var c = name[i];
             if (SPECIAL_CHARS[c]) {
-                makeUpper = true;
+                capitalize = true;
                 continue;
             }
 
-            if (makeUpper) {
+            if (capitalize) {
                 result.push(c.toUpperCase());
-                makeUpper = false;
+                capitalize = false;
             }
             else {
                 result.push(c);
@@ -148,18 +148,18 @@
     function camelCase3(name) {
         var length = name.length,
                 result = [],
-                makeUpper = false;
+                capitalize = false;
 
         for (var i = 0; i < length; i++) {
             var c = name[i];
             if (SPECIAL_CHARS.hasOwnProperty(c)) {
-                makeUpper = true;
+                capitalize = true;
                 continue;
             }
 
-            if (makeUpper) {
+            if (capitalize) {
                 result.push(c.toUpperCase());
-                makeUpper = false;
+                capitalize = false;
             }
             else {
                 result.push(c);
@@ -181,18 +181,18 @@
     function camelCase4(name) {
         var length = name.length,
                 result = '',
-                makeUpper = false;
+                capitalize = false;
 
         for (var i = 0; i < length; i++) {
             var c = name[i];
             if (SPECIAL_CHARS.hasOwnProperty(c)) {
-                makeUpper = true;
+                capitalize = true;
                 continue;
             }
 
-            if (makeUpper) {
+            if (capitalize) {
                 result += c.toUpperCase();
-                makeUpper = false;
+                capitalize = false;
             }
             else {
                 result += c;
@@ -213,19 +213,19 @@
 
     function camelCase5(name) {
         var length = name.length,
-                result = '',
-                makeUpper = false;
+            result = '',
+            capitalize = false;
 
         for (var i = 0; i < length; i++) {
             var c = name[i];
             if (c === ':' || c === '-' || c === '_') {
-                makeUpper = true;
+                capitalize = true;
                 continue;
             }
 
-            if (makeUpper) {
+            if (capitalize) {
                 result += c.toUpperCase();
-                makeUpper = false;
+                capitalize = false;
             }
             else {
                 result += c;

@@ -1079,8 +1079,8 @@ function equals(o1, o2) {
   if (o1 === o2) return true;
   if (o1 === null || o2 === null) return false;
   if (o1 !== o1 && o2 !== o2) return true; // NaN === NaN
-  var t1 = typeof o1, t2 = typeof o2, length, key, keySet;
-  if (t1 == t2 && t1 == 'object') {
+  if (typeof o1 === 'object' && typeof o2 === 'object' ) {
+    var length, key, keySet
     if (isArray(o1)) {
       if (!isArray(o2)) return false;
       if ((length = o1.length) == o2.length) {
