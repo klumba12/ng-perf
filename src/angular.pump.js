@@ -3456,8 +3456,13 @@ forEach({
       }
     } else {
       // we are a write, so apply to all children
-      for (i = 0; i < nodeCount; i++) {
-        fn(this[i], arg1, arg2);
+      if(nodeCount === 1){
+         fn(this[0], arg1, arg2);
+      }
+      else{
+         for (i = 0; i < nodeCount; i++) {
+          fn(this[i], arg1, arg2);
+        }
       }
       // return self for chaining
       return this;
