@@ -2819,38 +2819,38 @@ var jqLiteMinErr = minErr('jqLite');
  * @param name Name to normalize
  */
  function camelCase(name) {
-        var length = name.length,
-                result = '',
-                makeUpper = false;
+   var length = name.length,
+       result = '',
+       capitalize = false;
 
-        for (var i = 0; i < length; i++) {
-            var c = name[i];
-            if (c === ':' || c === '-' || c === '_') {
-                makeUpper = true;
-                continue;
-            }
+   for (var i = 0; i < length; i++) {
+      var c = name.charAt(i);
+      if (c === ':' || c === '-' || c === '_') {
+         capitalize = true;
+         continue;
+      }
 
-            if (makeUpper) {
-                result += c.toUpperCase();
-                makeUpper = false;
-            }
-            else {
-                result += c;
-            }
-        }
+      if (capitalize) {
+         result += c.toUpperCase();
+         capitalize = false;
+      }
+      else {
+         result += c;
+      }
+   }
 
-        if(result[0] === 'm' && 
-           result[1] === 'o' && 
-           result[2] === 'z'){
-            var n = reult[4];
-            if(n && n.toUpperCase() === n){
-                reult[0] = 'M';
-             }
-        }
+   if (result.charAt(0) === 'm' &&
+       result.charAt(1) === 'o' &&
+       result.charAt(2) === 'z') {
+      var n = result.charAt(3);
+      if (n && n.toUpperCase() === n) {
+         result[0] = 'M';
+      }
+   }
 
 
-        return result;
-    }
+   return result;
+}
 
 var SINGLE_TAG_REGEXP = /^<([\w-]+)\s*\/?>(?:<\/\1>|)$/;
 var HTML_REGEXP = /<|&#?\w+;/;
