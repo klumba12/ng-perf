@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+    <script src="./angular.js"></script>
+</head>
+
+<body ng-controller="test">
+
+<ul>
+    <li>equals: {{state.equals}}ms</li>
+    <li>equals1: {{state.equals1}}ms</li>
+    <!--<li>equals2: {{state.equals2}}ms</li>-->
+    <!--<li>equals3: {{state.equals3}}ms</li>-->
+    <!--<li>equals4: {{state.equals4}}ms</li>-->
+    <!--<li>equals5: {{state.equals5}}ms</li>-->
+    <!--<li>equals6: {{state.equals6}}ms</li>-->
+    <!--<li>equals7: {{state.equals7}}ms</li>-->
+    <!--<li>equals8: {{state.equals8}}ms</li>-->
+    <!--<li>equals9: {{state.equals9}}ms</li>-->
+</ul>
+
+</body>
+
+</html>
+
+<script language="javascript">
+
+    var app = angular.module('app', []);
+
+    app.controller('test', ['$scope', '$interval', function ($scope, $interval) {
+        var cases = [
+            [null, null],
+            [undefined, null],
+            [null, undefined],
+            [null, ''],
+            [0, undefined],
+            [NaN, undefined],
+            [NaN, NaN],
+            [Infinity, Infinity],
+            [100, 200],
+            [100, 100],
+            [null, 100],
+            [null, null],
+            ['foo', 'bar'],
+            ['foo', 'foo'],
+            ['foo', null],
+            [undefined, 'foobarbaz'],
+            [Date.now(), Date.now()],
+            [new Date(), new Date()],
+            [1.2, 1.3],
+            [1.23, 0],
+            [/[A-Z]/, /[a-z]/],
+            [/[A-Z]/, /[A-Z]/],
+            [[0, 1, 2], ['foo', 'bar', 'baz']],
+            [[0, 1, 2], [0, 1, 2]],
+            [angular.noop, angular.noop],
+            [NaN, 12],
+            [{foo: 'bar'}, {foo: 'baz'}],
+            [{foo: 'bar', bar: 'foo'}, {foo: 'bar', bar: 'foo'}],
+        ];
+
+        var count = 100000;
+
+        $interval(function () {
+            $scope.state = {
+                equals: test(count, angular.equals, cases),
+                equals1: test(count, equals1, cases),
+//                equals2: test(count, equals2, cases),
+//                equals3: test(count, equals3, cases),
+//                equals4: test(count, equals4, cases),
+//                equals5: test(count, equals5, cases),
+//                equals6: test(count, equals6, cases),
+//                equals7: test(count, equals7, cases),
+//                equals8: test(count, equals8, cases),
+//                equals9: test(count, equals9, cases)
+            };
+        }, 100);
+
+        function test(n, f, cases) {
+            var start = Date.now(),
+                    count = n;
+
+            do {
+                cases.forEach(function (arg) {
+                    f(arg[0], arg[1]);
+                });
+            } while (--n);
+
+            return (Date.now() - start) / count;
+        }
+    }]);
+
+    var isArray = angular.isArray,
+            isDate = angular.isDate,
+            isFunction = angular.isFunction,
+            isDefined = angular.isDefined,
+            toString = Object.prototype.toString;
+
+    function isRegExp(value) {
+        return toString.call(value) === '[object RegExp]';
+    }
+
+    function isWindow(obj) {
+        return obj && obj.window === obj;
+    }
+
+    function createMap() {
+        return Object.create(null);
+    }
+
+    function isScope(obj) {
+        return obj && obj.$evalAsync && obj.$watch;
+    }
+
+    function getType(o) {
+        return toString.call(value);
+    }
+
+
+    function equals1(o1, o2) {
+        if (o1 === o2) return true;
+        if (o1 === null || o2 === null) return false;
+        if (o1 !== o1 && o2 !== o2) return true; // NaN === NaN
+        if (typeof o1 === 'object' && typeof o2 === 'object') {
+            var t1 = toString.call(o1);
+            var length, key, keySet
+            if (t1 === '[object Array]') {
+                if (toString.call(o2) !== '[object Array]') return false;
+                if ((length = o1.length) === o2.length) {
+                    for (key = 0; key < length; key++) {
+                        if (!equals1(o1[key], o2[key])) return false;
+                    }
+                    return true;
+                }
+            } else if (t1 === '[object Date]') {
+                if (toString.call(o2) !== '[object Date]') return false;
+                return equals1(o1.getTime(), o2.getTime());
+            } else if (t1 === '[object RegExp]') {
+                if (toString.call(o2) !== '[object RegExp]') return false;
+                return o1.toString() === o2.toString();
+            } else {
+                if (isScope(o1) || isScope(o2) || isWindow(o1) || isWindow(o2) ||
+                        isArray(o2) || isDate(o2) || isRegExp(o2)) return false;
+                keySet = Object.create(null);
+                for (key in o1) {
+                    if (key.charAt(0) === '$') continue;
+                    var v = o1[key];
+
+                    if (isFunction(v)) continue;
+                    if (!equals1(v, o2[key])) return false;
+                    keySet[key] = true;
+                }
+                for (key in o2) {
+                    if (!(key in keySet) &&
+                            key.charAt(0) !== '$') {
+                        var v = o2[key];
+                        if(isDefined(v) && !isFunction(v)) return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+</script>
