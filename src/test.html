@@ -2,7 +2,7 @@
 <html ng-app="app">
 
 <head>
-    <script src="./angular.pump.js"></script>
+    <script src="./angular.js"></script>
     <style>
         table {
             border-spacing: 0;
@@ -93,7 +93,7 @@
                 var state = $scope.state;
                 state.current = Date.now() - start;
                 state.min = state.min ? Math.min(state.current, state.min) : state.current;
-                state.max = state.min ? Math.max(state.current, state.min) : state.current;
+                state.max = state.max ? Math.max(state.current, state.max) : state.current;
                 state.total += state.current;
                 state.tick++;
 
