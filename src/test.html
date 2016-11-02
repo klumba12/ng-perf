@@ -30,10 +30,10 @@
 </table>
 
 <ul ng-if="state.current">
-    <li>tick: {{state.tick}}</li>
-    <li>current: {{state.current}}ms</li>
-    <li>min: {{state.min}}ms</li>
-    <li>max: {{state.max}}ms</li>
+    <li>tick: <span ng-bind="state.tick"></span></li>
+    <li>current: <span ng-bind="state.current"></span>ms</li>
+    <li>min: <span ng-bind="state.min"></span>ms</li>
+    <li>max: <span ng-bind="state.max"></span>ms</li>
     <li ng-if="state.tick">avg: {{Math.round(state.total / state.tick)}}ms</li>
 </ul>
 

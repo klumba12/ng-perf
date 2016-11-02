@@ -130,17 +130,6 @@
       return result;
    }
 
-   function style(element, name, value) {
-      if (angular.isObject(value)) {
-         for (var key in value) {
-            element.style[key] = value[key];
-         }
-      }
-      else {
-         element.style[name] = value;
-      }
-   }
-
    function pe($rootScope, $parse) {
       var watchers = [],
           isDirty = false;
