@@ -13,8 +13,8 @@
         }
 
         table td div {
-            width: 1px;
-            height: 1px;
+            width: 2px;
+            height: 2px;
         }
     </style>
 </head>
@@ -23,7 +23,7 @@
 <table>
     <tr ng-repeat="row in ::data track by $index">
         <td ng-repeat="color in ::row track by $index">
-            <div ng-style="{'background-color': '#' + color}">
+            <div ng-style="{'backgroundColor': '#' + color}">
             </div>
         </td>
     </tr>
@@ -47,7 +47,7 @@
     app.controller('test', ['$scope', '$interval', function ($scope, $interval) {
         var rows = 200;
         var columns = 200;
-        var timeout = 10;
+        var timeout = 0;
 
         $scope.Math = Math;
         $scope.data = [];

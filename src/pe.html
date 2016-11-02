@@ -14,8 +14,8 @@
         }
 
         table td div {
-            width: 1px;
-            height: 1px;
+            width: 2px;
+            height: 2px;
         }
     </style>
 </head>
@@ -24,7 +24,7 @@
 <table>
     <tr ng-repeat="row in ::data track by $index">
         <td ng-repeat="item in ::row track by $index">
-            <div pe-style="{'background-color': '#' + item.color}">
+            <div pe-style="{'backgroundColor': '#' + item.color}" pe-camel-case>
             </div>
         </td>
     </tr>
@@ -48,7 +48,7 @@
     app.controller('test', ['$scope', '$interval', 'pe', function ($scope, $interval, pe) {
         var rows = 200;
         var columns = 200;
-        var timeout = 10;
+        var timeout = 0;
 
         $scope.Math = Math;
         $scope.data = [];
