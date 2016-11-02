@@ -34,14 +34,17 @@
 
    function pe($rootScope, $parse) {
       var watchers = [],
-          digestQueue = [];
+          isDirty = false;
+          //digestQueue = [];
 
       function notify(e) {
-         digestQueue.push(e);
+         isDirty = true;
+         //digestQueue.push(e);
       }
 
       function digest() {
-         digestQueue = [];
+         //digestQueue = [];
+         isDirty = false;
 
          for (var i = 0, length = watchers.length; i < length; i++) {
             var w = watchers[i],
@@ -88,7 +91,7 @@
 
       $rootScope.$watch(function () {
          var i = 8;
-         while (digestQueue.length) {
+         while (isDirty) {
             digest();
             if (i-- === 0) {
                throw  new Error('Reached maximum number of invalidate attempts');
