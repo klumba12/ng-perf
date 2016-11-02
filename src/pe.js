@@ -2,10 +2,12 @@
 
    angular.module('pe', [])
        .service('pe', pe)
-       .directive('peStyle', peStyle);
+       .directive('peStyle', peStyle)
+       .directive('peBind', peBind);
 
    pe.$inject = ['$rootScope', '$parse'];
    peStyle.$inject = ['pe'];
+   peBind.$inject = ['$compile', 'pe'];
 
    function Proxy(model, notify) {
       if (model) {
@@ -130,6 +132,24 @@
       return result;
    }
 
+   function stringify(value) {
+      if (value == null) {
+         return '';
+      }
+      switch (typeof value) {
+         case 'string':
+            break;
+         case 'number':
+            value = '' + value;
+            break;
+         default:
+            value = angular.toJson(value);
+      }
+
+      return value;
+   }
+
+
    function pe($rootScope, $parse) {
       var watchers = [],
           isDirty = false;
@@ -204,7 +224,7 @@
 
    function peStyle(pe) {
       return {
-         restrict: 'A',
+         restrict: 'AC',
          link: function (scope, element, attr) {
             var watch = pe.watch(scope),
                 node = element[0],
@@ -228,5 +248,22 @@
          }
       };
    }
+
+   function peBind($compile, pe) {
+      return {
+         restrict: 'AC',
+         compile: function ngBindCompile(templateElement) {
+            $compile.$$addBindingClass(templateElement);
+            return function ngBindLink(scope, element, attr) {
+               var watch = pe.watch(scope);
+               $compile.$$addBindingInfo(element, attr.peBind);
+               element = element[0];
+               watch(attr.peBind, function ngBindWatchAction(value) {
+                  element.textContent = stringify(value);
+               });
+            };
+         }
+      };
+   };
 
 })(angular);
