@@ -45,10 +45,11 @@
 <script language="javascript">
     var app = angular.module('app', ['pe']);
 
-    app.controller('test', ['$scope', '$interval', 'pe', function ($scope, $interval, pe) {
-        var rows = 200;
-        var columns = 200;
-        var timeout = 0;
+    app.controller('test', ['$scope', '$interval', 'pe', function ($scope, $interval, Pe) {
+        var rows = 200,
+            columns = 200,
+            timeout = 0,
+            pe = new Pe($scope);
 
         $scope.Math = Math;
         $scope.data = [];

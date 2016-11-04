@@ -166,16 +166,17 @@
          }
       }
 
-      function Pe() {
+      function Pe(scope) {
+        this.scope = scope;
       }
 
       Pe.prototype.model = function (model) {
          return new peObject(model);
       };
 
-      Pe.prototype.watch = function (scope) {
-         return function (expression, handler) {
+      Pe.prototype.watch = function (expression, handler) {
             var get = $parse(expression),
+                scope = this.scope,
                 value = get(scope),
                 w = {
                    get: function () {
@@ -194,33 +195,33 @@
                   watchers.splice(index, 1);
                }
             }
-         }
       };
 
       $rootScope.$watch(function () {
-         var i = 8;
-         while (isDirty) {
+         var attempts = 8;
+         while (isDirty && attempts--) {
             digest();
-            if (i-- === 0) {
-               throw  new Error('Reached maximum number of invalidate attempts');
-            }
+         }
+
+         if (!attempts) {
+            throw  new Error('Reached maximum number of invalidate attempts');
          }
 
          return true;
-      }, angular.noop)
+      }, angular.noop);
 
-      return new Pe(watchers);
+      return Pe;
    }
 
-   function peStyle(pe) {
+   function peStyle(Pe) {
       return {
          restrict: 'AC',
          link: function (scope, element, attr) {
-            var watch = pe.watch(scope),
+            var pe = new Pe(scope),
                 node = element[0],
-                convertToCamelCase = !!attr.hasOwnProperty('peStyleInCamelCase');
+                convertToCamelCase = !attr.hasOwnProperty('peStyleInCamelCase');
 
-            watch(attr.peStyle, function peStyleWatchAction(newStyles, oldStyles) {
+            pe.watch(attr.peStyle, function peStyleWatchAction(newStyles, oldStyles) {
                if (oldStyles && (newStyles !== oldStyles)) {
                   for (var key in oldStyles) {
                      var name = convertToCamelCase ? camelCase(key) : key;
@@ -239,16 +240,16 @@
       };
    }
 
-   function peBind($compile, pe) {
+   function peBind($compile, Pe) {
       return {
          restrict: 'AC',
          compile: function ngBindCompile(templateElement) {
             $compile.$$addBindingClass(templateElement);
             return function ngBindLink(scope, element, attr) {
-               var watch = pe.watch(scope);
+               var pe = new Pe(scope);
                $compile.$$addBindingInfo(element, attr.peBind);
                element = element[0];
-               watch(attr.peBind, function peBindWatchAction(value) {
+               pe.watch(attr.peBind, function peBindWatchAction(value) {
                   element.textContent = stringify(value);
                });
             };
