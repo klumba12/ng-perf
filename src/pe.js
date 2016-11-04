@@ -152,9 +152,10 @@
 
       function digest() {
          isDirty = false;
+         var length = watchers.length;
 
-         for (var i = 0, length = watchers.length; i < length; i++) {
-            var w = watchers[i],
+         while(length--) {
+            var w = watchers[length],
                 newValue = w.get(),
                 oldValue = w.value;
 
@@ -184,7 +185,7 @@
                    value: value
                 };
 
-            watchers.push(w);
+            watchers.unshift(w);
             handler(value, value);
 
             return function () {
@@ -217,7 +218,7 @@
          link: function (scope, element, attr) {
             var watch = pe.watch(scope),
                 node = element[0],
-                convertToCamelCase = !!attr.peCamelCase;
+                convertToCamelCase = !!attr.hasOwnProperty('peStyleInCamelCase');
 
             watch(attr.peStyle, function peStyleWatchAction(newStyles, oldStyles) {
                if (oldStyles && (newStyles !== oldStyles)) {
