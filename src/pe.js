@@ -9,31 +9,6 @@
    peStyle.$inject = ['pe'];
    peBind.$inject = ['$compile', 'pe'];
 
-   function Proxy(model, notify) {
-      if (model) {
-         var self = this;
-         Object.keys(model)
-             .forEach(function (key) {
-                var temp = model[key];
-                Object.defineProperty(self, key, {
-                   get: function () {
-                      return temp;
-                   },
-                   set: function (value) {
-                      if (temp !== value) {
-                         model[key] = temp = value;
-                         notify({
-                            source: model,
-                            key: key,
-                            value: value
-                         });
-                      }
-                   }
-                });
-             });
-      }
-   }
-
    var isArray = angular.isArray,
        isDate = angular.isDate,
        isFunction = angular.isFunction,
@@ -153,15 +128,29 @@
    function pe($rootScope, $parse) {
       var watchers = [],
           isDirty = false;
-      //digestQueue = [];
 
-      function notify(e) {
-         isDirty = true;
-         //digestQueue.push(e);
-      }
+	  function peObject(model) {
+	      if (model) {
+	         var self = this;
+	         Object.keys(model)
+	             .forEach(function (key) {
+	                var temp = model[key];
+	                Object.defineProperty(self, key, {
+	                   get: function () {
+	                      return temp;
+	                   },
+	                   set: function (value) {
+	                      if (temp !== value) {
+	                         model[key] = temp = value;
+	                         isDirty = true;
+	                      }
+	                   }
+	                });
+	             });
+	      }
+   	  }
 
       function digest() {
-         //digestQueue = [];
          isDirty = false;
 
          for (var i = 0, length = watchers.length; i < length; i++) {
@@ -180,7 +169,7 @@
       }
 
       Pe.prototype.model = function (model) {
-         return new Proxy(model, notify);
+         return new peObject(model);
       };
 
       Pe.prototype.watch = function (scope) {
@@ -230,7 +219,7 @@
                 node = element[0],
                 convertToCamelCase = !!attr.peCamelCase;
 
-            watch(attr.peStyle, function ngStyleWatchAction(newStyles, oldStyles) {
+            watch(attr.peStyle, function peStyleWatchAction(newStyles, oldStyles) {
                if (oldStyles && (newStyles !== oldStyles)) {
                   for (var key in oldStyles) {
                      var name = convertToCamelCase ? camelCase(key) : key;
@@ -258,7 +247,7 @@
                var watch = pe.watch(scope);
                $compile.$$addBindingInfo(element, attr.peBind);
                element = element[0];
-               watch(attr.peBind, function ngBindWatchAction(value) {
+               watch(attr.peBind, function peBindWatchAction(value) {
                   element.textContent = stringify(value);
                });
             };

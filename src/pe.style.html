@@ -22,8 +22,8 @@
 
 <body ng-controller="test">
 <table>
-    <tr ng-repeat="row in ::data track by $index">
-        <td ng-repeat="item in ::row track by $index">
+    <tr ng-repeat="row in data track by $index">
+        <td ng-repeat="item in row track by $index">
             <div pe-style="{'backgroundColor': '#' + item.color}" pe-camel-case>
             </div>
         </td>
