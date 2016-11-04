@@ -23,8 +23,8 @@
 <body ng-controller="test">
 <table>
     <tr ng-repeat="row in data track by $index">
-        <td ng-repeat="item in row track by $index">
-            <div pe-style="{'backgroundColor': '#' + item.color}" pe-style:in-camel-case>
+        <td ng-repeat="color in row track by $index">
+            <div pe-style="{'backgroundColor': '#' + color}" pe-style:in-camel-case>
             </div>
         </td>
     </tr>
@@ -52,8 +52,8 @@
             pe = new Pe($scope);
 
         $scope.Math = Math;
-        $scope.data = [];
-        $scope.state = pe.model({
+        $scope.data = pe.patch([]);
+        $scope.state = pe.patch({
             min: 0,
             max: 0,
             tick: 0,
@@ -70,7 +70,7 @@
             for (var i = 0; i < rows; i++) {
                 var row = data[i] = [];
                 for (var j = 0; j < columns; j++) {
-                    row[j] = pe.model({color: color()});
+                    pe.set(row, j, color());
                 }
             }
         }
@@ -80,7 +80,7 @@
             for (var i = 0; i < rows; i++) {
                 var row = data[i];
                 for (var j = 0; j < columns; j++) {
-                    row[j].color = color();
+                    pe.set(row, j, color());
                 }
             }
         }

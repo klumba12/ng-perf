@@ -129,33 +129,57 @@
       var watchers = [],
           isDirty = false;
 
-	  function peObject(model) {
-	      if (model) {
-	         var self = this;
-	         Object.keys(model)
-	             .forEach(function (key) {
-	                var temp = model[key];
-	                Object.defineProperty(self, key, {
-	                   get: function () {
-	                      return temp;
-	                   },
-	                   set: function (value) {
-	                      if (temp !== value) {
-	                         model[key] = temp = value;
-	                         isDirty = true;
-	                      }
-	                   }
-	                });
-	             });
+	    function peObject(model, bind) {
+	       if (model) {
+           for(var key in model) {
+              if(model.hasOwnProperty(key) && key.charAt(0) !== '$') {
+                  let thisValue = model[key];
+                  Object.defineProperty(this, key, {
+                     get: function () {
+                        return thisValue;
+                     },
+                     set: bind 
+                      ? function (value) {
+                          if (thisValue !== value) {
+                             model[key] = thisValue = value;
+                             isDirty = true;
+                          }
+                        }
+                      : function (value) {
+                          if (thisValue !== value) {
+                             thisValue = value;
+                             isDirty = true;
+                          }
+                        } 
+                  }); 
+
+                  if(thisValue){
+                    switch(toString(thisValue)){
+                       case '[object Object]':
+                       peObject.bind(this[key])(thisValue); 
+                       break;
+                       case '[object Array]':
+                        peArray.bind(this[key])(thisValue);
+                       break; 
+                    }  
+                  }
+
+              }
+           }
 	      }
    	  }
 
+      function peArray(model){
+
+      }
+
       function digest() {
          isDirty = false;
-         var length = watchers.length;
+         var ws = watchers.slice(),
+             length = ws.length;
 
          while(length--) {
-            var w = watchers[length],
+            var w = ws[length],
                 newValue = w.get(),
                 oldValue = w.value;
 
@@ -166,13 +190,37 @@
          }
       }
 
-      function Pe(scope) {
-        this.scope = scope;
+      function destroy(scope){
+        // TODO: implement 
       }
 
-      Pe.prototype.model = function (model) {
-         return new peObject(model);
+      function Pe(scope) {
+        this.scope = scope;
+        scope.$on('$destroy', destroy);
+      }
+
+      Pe.prototype.set = function(model, key, value){
+        model[key] = value;
+        isDirty = true;
       };
+
+      Pe.prototype.model = function (model) {
+         return new peObject(model, true);
+      };
+
+      Pe.prototype.patch = function(model) {
+        if(model){
+             var type = typeof model;
+             switch(type){
+              case '[object Object]': 
+                 peObject.bind(model)(model, false);
+              case '[object Array]':
+                 new peArray.bind(model)(model, false);
+              }
+        }
+
+        return model;
+      }
 
       Pe.prototype.watch = function (expression, handler) {
             var get = $parse(expression),
