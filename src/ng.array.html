@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+    <script src="./angular.js"></script>
+    <style>
+        table {
+            border-spacing: 0;
+        }
+
+        table td {
+            padding: 0;
+        }
+
+        table td div {
+            width: 2px;
+            height: 2px;
+        }
+    </style>
+</head>
+
+<body ng-controller="test">
+<table>
+    <tr ng-repeat="row in data track by $index">
+        <td ng-repeat="color in row track by $index">
+            <div ng-style="::{'backgroundColor': color}">
+            </div>
+        </td>
+    </tr>
+</table>
+
+<ul ng-if="state.current">
+    <li>tick: <span ng-bind="state.tick"></span></li>
+    <li>current: <span ng-bind="state.current"></span>ms</li>
+    <li>min: <span ng-bind="state.min"></span>ms</li>
+    <li>max: <span ng-bind="state.max"></span>ms</li>
+    <li ng-if="state.tick">avg: {{Math.round(state.total / state.tick)}}ms</li>
+</ul>
+
+</body>
+
+</html>
+
+<script language="javascript">
+    var app = angular.module('app', []);
+
+    app.controller('test', ['$scope', '$interval', function ($scope, $interval) {
+        var size = 200,
+            timeout = 0,
+            cursor = 0,
+            direction = true;
+
+        $scope.Math = Math;
+        $scope.data = [];
+        $scope.state = {
+            min: 0,
+            max: 0,
+            tick: 0,
+            current: 0,
+            total: 0
+        };
+
+        function color() {
+            return '#' + Math.floor(Math.random() * 16777215).toString(16);
+        }
+
+        function setup() {
+        }
+
+        function update() {
+            var data = $scope.data;
+            if(direction){
+                var row = data[cursor++] = [];
+                for (var j = 0; j < size; j++) {
+                    row[j] = color();
+                }
+
+                if(cursor === size){
+                   direction = !direction;
+                }
+            }
+            else{
+                data.splice(--cursor);
+                if(cursor === 0){
+                   direction = !direction;
+                }
+            }
+        }
+
+        var start;
+        var stop = $interval(function () {
+            if (!start) {
+                start = Date.now();
+                setup();
+            }
+            else {
+                var state = $scope.state;
+                state.current = Date.now() - start;
+                state.min = state.min ? Math.min(state.current, state.min) : state.current;
+                state.max = state.max ? Math.max(state.current, state.max) : state.current;
+                state.total += state.current;
+                state.tick++;
+
+                start = Date.now();
+                update();
+            }
+
+        }, timeout);
+
+    }]);
+</script>
