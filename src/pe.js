@@ -1,4 +1,4 @@
-(function (angular, undefined) {
+(function (angular) {
 
    angular.module('pe', [])
        .service('pe', pe)
@@ -33,7 +33,7 @@
       if (o1 !== o1 && o2 !== o2) return true; // NaN === NaN
       if (typeof o1 === 'object' && typeof o2 === 'object') {
          var t1 = toString.call(o1);
-         var length, key, keySet
+         var length, key, keySet;
          if (t1 === '[object Array]') {
             if (toString.call(o2) !== '[object Array]') return false;
             if ((length = o1.length) === o2.length) {
@@ -129,48 +129,48 @@
       var watchers = [],
           isDirty = false;
 
-	    function peObject(model, bind) {
-	       if (model) {
-           for(var key in model) {
-              if(model.hasOwnProperty(key) && key.charAt(0) !== '$') {
+      function peObject(model, bind) {
+         if (model) {
+            for (var key in model) {
+               if (model.hasOwnProperty(key) && key.charAt(0) !== '$') {
                   let theValue = model[key];
                   Object.defineProperty(this, key, {
                      get: function () {
                         return theValue;
                      },
-                     set: bind 
-                      ? function (value) {
-                          if (theValue !== value) {
-                             model[key] = theValue = value;
-                             isDirty = true;
-                          }
+                     set: bind
+                         ? function (value) {
+                        if (theValue !== value) {
+                           model[key] = theValue = value;
+                           isDirty = true;
                         }
-                      : function (value) {
-                          if (theValue !== value) {
-                             theValue = value;
-                             isDirty = true;
-                          }
-                        } 
-                  }); 
+                     }
+                         : function (value) {
+                        if (theValue !== value) {
+                           theValue = value;
+                           isDirty = true;
+                        }
+                     }
+                  });
 
-                  if(theValue){
-                    switch(toString(theValue)){
-                       case '[object Object]':
-                       peObject.bind(this[key])(theValue); 
-                       break;
-                       case '[object Array]':
-                        peArray.bind(this[key])(theValue);
-                       break; 
-                    }  
+                  if (theValue) {
+                     switch (toString(theValue)) {
+                        case '[object Object]':
+                           peObject.bind(this[key])(theValue);
+                           break;
+                        case '[object Array]':
+                           peArray.bind(this[key])(theValue);
+                           break;
+                     }
                   }
 
-              }
-           }
-	      }
-   	  }
+               }
+            }
+         }
+      }
 
-      function peArray(model){
-        // TODO: implement
+      function peArray(model) {
+         // TODO: implement
       }
 
       function digest() {
@@ -178,7 +178,7 @@
          var ws = watchers.slice(),
              length = ws.length;
 
-         while(length--) {
+         while (length--) {
             var w = ws[length],
                 newValue = w.get(),
                 oldValue = w.value;
@@ -190,59 +190,61 @@
          }
       }
 
-      function destroy(scope){
-        // TODO: implement 
+      function destroy(scope) {
+         // TODO: implement
       }
 
       function Pe(scope) {
-        this.scope = scope;
-        scope.$on('$destroy', destroy);
+         this.scope = scope;
+         scope.$on('$destroy', destroy);
       }
 
-      Pe.prototype.set = function(model, key, value){
-        model[key] = value;
-        isDirty = true;
+      Pe.prototype.set = function (model, key, value) {
+         model[key] = value;
+         isDirty = true;
       };
 
       Pe.prototype.model = function (model) {
          return new peObject(model, true);
       };
 
-      Pe.prototype.patch = function(model) {
-        if(model){
-             var type = toString(model);
-             switch(type){
-              case '[object Object]': 
-                 peObject.bind(model)(model, false);
-              case '[object Array]':
-                 new peArray.bind(model)(model, false);
-              }
-        }
+      Pe.prototype.patch = function (model) {
+         if (model) {
+            var type = toString(model);
+            switch (type) {
+               case '[object Object]':
+                  peObject.bind(model)(model, false);
+                  break;
+               case '[object Array]':
+                  new peArray.bind(model)(model, false);
+                  break;
+            }
+         }
 
-        return model;
-      }
+         return model;
+      };
 
       Pe.prototype.watch = function (expression, handler) {
-            var get = $parse(expression),
-                scope = this.scope,
-                value = get(scope),
-                w = {
-                   get: function () {
-                      return get(scope);
-                   },
-                   handler: handler,
-                   value: value
-                };
+         var get = $parse(expression),
+             scope = this.scope,
+             value = get(scope),
+             w = {
+                get: function () {
+                   return get(scope);
+                },
+                handler: handler,
+                value: value
+             };
 
-            watchers.unshift(w);
-            handler(value, value);
+         watchers.unshift(w);
+         handler(value, value);
 
-            return function () {
-               var index = watchers.indexOf(w);
-               if (index >= 0) {
-                  watchers.splice(index, 1);
-               }
+         return function () {
+            var index = watchers.indexOf(w);
+            if (index >= 0) {
+               watchers.splice(index, 1);
             }
+         }
       };
 
       $rootScope.$watch(function () {
@@ -272,15 +274,21 @@
             pe.watch(attr.peStyle, function peStyleWatchAction(newStyles, oldStyles) {
                if (oldStyles && (newStyles !== oldStyles)) {
                   for (var key in oldStyles) {
-                     var name = convertToCamelCase ? camelCase(key) : key;
-                     node.style[name] = '';
+                     if (convertToCamelCase) {
+                        key = camelCase(key);
+                     }
+
+                     node.style[key] = '';
                   }
                }
 
                if (newStyles) {
                   for (var key in newStyles) {
-                     var name = convertToCamelCase ? camelCase(key) : key;
-                     node.style[name] = newStyles[key];
+                     if (convertToCamelCase) {
+                        key = camelCase(key);
+                     }
+
+                     node.style[key] = newStyles[key];
                   }
                }
             });
@@ -293,12 +301,12 @@
          restrict: 'AC',
          compile: function ngBindCompile(templateElement) {
             $compile.$$addBindingClass(templateElement);
-            return function ngBindLink(scope, element, attr) {
-               var pe = new Pe(scope);
+            return function peBindLink(scope, element, attr) {
+               var pe = new Pe(scope),
+                   node = element[0];
                $compile.$$addBindingInfo(element, attr.peBind);
-               element = element[0];
                pe.watch(attr.peBind, function peBindWatchAction(value) {
-                  element.textContent = stringify(value);
+                  node.textContent = stringify(value);
                });
             };
          }
