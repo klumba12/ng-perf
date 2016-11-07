@@ -210,7 +210,7 @@
 
       Pe.prototype.patch = function(model) {
         if(model){
-             var type = typeof model;
+             var type = toString(model);
              switch(type){
               case '[object Object]': 
                  peObject.bind(model)(model, false);
