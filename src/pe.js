@@ -133,33 +133,33 @@
 	       if (model) {
            for(var key in model) {
               if(model.hasOwnProperty(key) && key.charAt(0) !== '$') {
-                  let thisValue = model[key];
+                  let theValue = model[key];
                   Object.defineProperty(this, key, {
                      get: function () {
-                        return thisValue;
+                        return theValue;
                      },
                      set: bind 
                       ? function (value) {
-                          if (thisValue !== value) {
-                             model[key] = thisValue = value;
+                          if (theValue !== value) {
+                             model[key] = theValue = value;
                              isDirty = true;
                           }
                         }
                       : function (value) {
-                          if (thisValue !== value) {
-                             thisValue = value;
+                          if (theValue !== value) {
+                             theValue = value;
                              isDirty = true;
                           }
                         } 
                   }); 
 
-                  if(thisValue){
-                    switch(toString(thisValue)){
+                  if(theValue){
+                    switch(toString(theValue)){
                        case '[object Object]':
-                       peObject.bind(this[key])(thisValue); 
+                       peObject.bind(this[key])(theValue); 
                        break;
                        case '[object Array]':
-                        peArray.bind(this[key])(thisValue);
+                        peArray.bind(this[key])(theValue);
                        break; 
                     }  
                   }
@@ -170,7 +170,7 @@
    	  }
 
       function peArray(model){
-
+        // TODO: implement
       }
 
       function digest() {
@@ -252,7 +252,7 @@
          }
 
          if (!attempts) {
-            throw  new Error('Reached maximum number of invalidate attempts');
+            throw  new Error('Reached maximum number of digest attempts');
          }
 
          return true;
